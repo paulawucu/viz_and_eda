@@ -169,3 +169,68 @@ weather_df %>%
     ## Warning: Removed 15 rows containing non-finite values (stat_binhex).
 
 ![](visualization_pt1_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+## Univariate plots
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) +  # use +!!!!!
+  geom_histogram() + 
+  facet_grid(.~name)
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_bin).
+
+![](visualization_pt1_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+# let’s try some other plots
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) +
+  geom_density(alpha = 0.3)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density).
+
+![](visualization_pt1_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+Still with tmax and main
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
+
+![](visualization_pt1_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+Some people like violin plot…
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax)) +
+  geom_violin() # you can see the full distribution with this
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](visualization_pt1_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+What about ridges?
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, y = name)) +
+  geom_density_ridges(alpha = 0.8, scale = 0.8) # vertical separation of the plots, instead of on top of each other, scale: change separation between lines
+```
+
+    ## Picking joint bandwidth of 1.84
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
+
+![](visualization_pt1_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
