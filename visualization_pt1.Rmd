@@ -1,99 +1,63 @@
 ---
-title: "Simple document"
+title: "ggplot 1"
 output: github_document
 ---
 
-I'm an R Markdown document! 
 
 ```{r, echo = FALSE, message = FALSE}
 library(tidyverse)
-library(readxl)
-library(haven)
+library(ggridges)
 ```
 
-## Import some data
-I want to import "FAS_litters.csv"
+load in a dataset
 ```{r}
-litters_df = read_csv("./data/FAS_litters.csv")  # this is a relative path
-# don't use absolute path, absolute makes it un-sharable
+weather_df = 
+  rnoaa::meteo_pull_monitors(  # download the dataset 
+    c("USW00094728", "USC00519397", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), # pick three variabels that you care about
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>%  # from 20170101 to 20171231
+  mutate(
+    name = recode(  # create a new name variable that recode the weather station
+      id, 
+      USW00094728 = "CentralPark_NY", 
+      USC00519397 = "Waikiki_HA",
+      USS0023B17S = "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) %>%
+  select(name, id, everything())
 ```
-I imported the dataset. Now I need better names. 
 ```{r}
-names(litters_df)
-litters_df = janitor::clean_names(litters_df)  # could also import library janitor at the top, but janitor is large
-```
-Now I have better names. Let's take a look at the dataset.
-```{r}
-litters_df
-head(litters_df, 20)
-tail(litters_df, 5)
-```
-Now I use a lot is:
-```{r, eval = FALSE}
-view(litters_df)
+weather_df
 ```
 
-Here is `skimr`:
+Start making some plots
+# Scatterplot
+tmax vs. tmin in a scatterplot
 ```{r}
-skimr::skim(litters_df)
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + # the first argument should be the df ?
+  geom_point()
+```
+you can save ggplots
+```{r}
+gg_tmax_tmin = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + # the first argument should be the df ?
+  geom_point()
+
+gg_tmax_tmin # you can add geometry to this object
 ```
 
-## Arguments in "read_csv"
-```{r}
-# skip: skip the first 5 lines, don't display column names, set all "Low8" as na
-litters_df = 
-  read_csv(
-    "data/FAS_litters.csv", 
-    skip = 5, 
-    col_names = FALSE,
-    na = "Low8")
-litters_df
-```
-# parsing column
-```{r}
-# col_types: read_csv will guess the type of the data, but you can change it manually
-litters_data = read_csv(file = "./data/FAS_litters.csv",
-  col_types = cols(
-    Group = col_character(),
-    `Litter Number` = col_character(),
-    `GD0 weight` = col_double(),
-    `GD18 weight` = col_double(),
-    `GD of Birth` = col_integer(),
-    `Pups born alive` = col_integer(),
-    `Pups dead @ birth` = col_integer(),
-    `Pups survive` = col_integer()
-  )
-)
-tail(litters_data)
-```
+## Add more details/ fancy it up
+add color? lines? other stuff?
 
-## Reading from Excel
 ```{r}
-mlb11_df = read_excel("data/mlb11.xlsx")
-mlb11_df
-```
-
-read LotR data
-```{r}
-fellow_df = read_excel("data/LotR_Words.xlsx", range = "B3:D6")
-fellow_df
-```
-
-## read a SAS file
-this cannot work rn
-```{r, eval = FALSE}
-pulse_df = read_sas("data/public_pulse_data.sas7bdat")
-```
-
-## why to never use "read.csv"： does not give "tibble" and that's really bad
-```{r}
-litters_df_base = read.csv("data/FAS_litters.csv")
-litters_df_base
-```
-
-## how do i export data
-```{r}
-write_csv(fellow_df, "data/fellowship_words.csv")
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + # straightforward explanation
+  geom_point( alpha = 0.3) +  # alpha = 0: transparent, = 1: opaque, but the line is left along. you can set the geometry specific aesthetic by adding the aes() here or in ggplot() function (this will be global)
+  geom_smooth(se = FALSE) + # add three different lines showing the middle of the data set (nonlinear), Display confidence interval around smooth? 
+  facet_grid(. ~ name) # spread things out, the dot: don't want to separate the rows, just give me three separate columns
 ```
 
 
