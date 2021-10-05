@@ -7,6 +7,13 @@ output: github_document
 ```{r, echo = FALSE, message = FALSE}
 library(tidyverse)
 library(ggridges)
+
+# set global variable
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
 ```
 
 load in a dataset
@@ -133,6 +140,15 @@ What about ridges?
 weather_df %>% 
   ggplot(aes(x = tmax, y = name)) +
   geom_density_ridges(alpha = 0.8, scale = 0.8) # vertical separation of the plots, instead of on top of each other, scale: change separation between lines
+```
+
+## Embedding plots
+```{r, fig.width = 7, fig.height=5}
+# chunk header can change the output
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(aes(color = name), alpha = .5) 
+  
 ```
 
 
