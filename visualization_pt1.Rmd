@@ -36,14 +36,14 @@ Start making some plots
 tmax vs. tmin in a scatterplot
 ```{r}
 weather_df %>% 
-  ggplot(aes(x = tmin, y = tmax)) + # the first argument should be the df ?
+  ggplot(aes(x = tmin, y = tmax)) + 
   geom_point()
 ```
 you can save ggplots
 ```{r}
 gg_tmax_tmin = 
   weather_df %>% 
-  ggplot(aes(x = tmin, y = tmax)) + # the first argument should be the df ?
+  ggplot(aes(x = tmin, y = tmax)) +
   geom_point()
 
 gg_tmax_tmin # you can add geometry to this object
@@ -58,6 +58,45 @@ weather_df %>%
   geom_point( alpha = 0.3) +  # alpha = 0: transparent, = 1: opaque, but the line is left along. you can set the geometry specific aesthetic by adding the aes() here or in ggplot() function (this will be global)
   geom_smooth(se = FALSE) + # add three different lines showing the middle of the data set (nonlinear), Display confidence interval around smooth? 
   facet_grid(. ~ name) # spread things out, the dot: don't want to separate the rows, just give me three separate columns
+```
+Let's make more ggplot
+```{r}
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, size = prcp)) + # size of the scatterplot is proportional to the precipitation
+  geom_point(alpha = .3) + 
+  facet_grid(. ~name) + 
+  geom_smooth(se = FALSE)  # hard to see the CI
+```
+
+## Use data manipulation as part of this
+```{r}
+weather_df %>% 
+  # you can do this specifically to just one plot (i.e. central park)
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax = tmax * (9/5)  + 32,
+    tmin = tmin * (9/5)  + 32 
+  ) %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
+```
+
+## stacking geoms
+
+Which geoms do you want?
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_smooth(se = FALSE)  # can just show the smoothed line, if you want to show the points, you need to tell ggplot
+```
+
+Hexbin
+```{r}
+# hex meatmap
+weather_df %>% 
+  ggplot(aes(x = tmax, y = tmin)) + 
+  geom_hex()  # geom_bin_2d() also works, but its component is bin
 ```
 
 
