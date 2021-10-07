@@ -149,3 +149,23 @@ weather_df %>%
 
 ![](visualization_pt2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 you can also set global features, codes in www.p8105.com
+
+## `data` in geoms
+
+``` r
+central_park = 
+  weather_df %>% 
+  filter(name == "CentralPark_NY")
+
+waikiki = 
+  weather_df %>% 
+  filter(name == "Waikiki_HA")
+waikiki %>% 
+  ggplot(aes(x = date, y = tmax, color = name )) +
+  geom_point() +
+  geom_line(data = central_park)
+```
+
+    ## Warning: Removed 3 rows containing missing values (geom_point).
+
+![](visualization_pt2_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
