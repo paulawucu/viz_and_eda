@@ -1,4 +1,4 @@
-ggplot 1
+ggplot 2
 ================
 
 load in a dataset
@@ -66,10 +66,86 @@ Start making some plots # Scatterplot tmax vs. tmin in a scatterplot
 
 ``` r
 weather_df %>% 
-  ggplot(aes(x = tmin, y = tmax)) + 
-  geom_point()
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3) + 
+  labs(
+    title = "Temperature at Three station",
+    x = "Minimum daily temp (C)",
+    y = "Maximum daily temp (C)",
+    caption = "Data from moaa package with three stations"
+  )
 ```
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](visualization_pt2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](visualization_pt2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> ##
+Scales
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3) + 
+  labs(
+    title = "Temperature at Three station",
+    x = "Minimum daily temp (C)",
+    y = "Maximum daily temp (C)",
+    caption = "Data from moaa package with three stations"
+  ) + 
+  scale_x_continuous(  # continuous variable on the x axis
+    breaks = c(-15, 0, 15),
+    labels = c("-15 C", "0", "15")
+  ) + 
+  scale_y_continuous(
+    trans = "sqrt",  # sqrt transformation
+    position = "right"
+  )
+```
+
+    ## Warning in self$trans$transform(x): NaNs produced
+
+    ## Warning: Transformation introduced infinite values in continuous y-axis
+
+    ## Warning: Removed 90 rows containing missing values (geom_point).
+
+![](visualization_pt2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+Color scales
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.5) + 
+  labs(
+    title = "Temperature at Three station",
+    x = "Minimum daily temp (C)",
+    y = "Maximum daily temp (C)",
+    caption = "Data from moaa package with three stations"
+  ) + 
+  #scale_color_hue(h = c(100, 300))
+  scale_color_viridis_d()  # d for discrete variable 
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](visualization_pt2_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> ##
+Themes aren’t scale/ mapping related, but just to make plots look nicer
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.5) + 
+  labs(
+    title = "Temperature at Three station",
+    x = "Minimum daily temp (C)",
+    y = "Maximum daily temp (C)",
+    caption = "Data from moaa package with three stations"
+  ) + 
+  scale_color_viridis_d() +
+  theme_minimal() + # change background theme to bw/ classic/ minimal
+  #ggthemes::theme_excel() + # graphs look like coming right from excel
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](visualization_pt2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+you can also set global features, codes in www.p8105.com
