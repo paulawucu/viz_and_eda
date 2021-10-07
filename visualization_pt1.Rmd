@@ -143,7 +143,7 @@ weather_df %>%
 ```
 
 ## Embedding plots
-```{r, fig.width = 7, fig.height=5}
+```{r, fig.width =20}
 # chunk header can change the output
 weather_df %>% 
   ggplot(aes(x = tmin, y = tmax, color = name)) +

@@ -1,0 +1,42 @@
+---
+title: "ggplot 1"
+output: github_document
+---
+
+
+```{r, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(ggridges)
+```
+
+load in a dataset
+```{r}
+weather_df = 
+  rnoaa::meteo_pull_monitors(  # download the dataset 
+    c("USW00094728", "USC00519397", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), # pick three variabels that you care about
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>%  # from 20170101 to 20171231
+  mutate(
+    name = recode(  # create a new name variable that recode the weather station
+      id, 
+      USW00094728 = "CentralPark_NY", 
+      USC00519397 = "Waikiki_HA",
+      USS0023B17S = "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) %>%
+  select(name, id, everything())
+```
+```{r}
+weather_df
+```
+
+Start making some plots
+# Scatterplot
+tmax vs. tmin in a scatterplot
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
+```
+
