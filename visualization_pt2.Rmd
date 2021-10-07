@@ -8,6 +8,7 @@ output: github_document
 library(tidyverse)
 library(ggridges)
 library(viridis)
+library(patchwork)
 ```
 
 load in a dataset
@@ -114,5 +115,76 @@ waikiki %>%
   geom_point() +
   geom_line(data = central_park)
 ```
+
+## `patchwork`
+```{r}
+ggp_tmax_tmin = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = 0.5) +
+  theme(legend.position = "none")
+
+ggp_prep_dens = 
+  weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, fill = name)) +
+  geom_density(alpha = 0.3) +
+  theme(legend.position = "none")  # get rid of the legends
+
+ggp_tmax_date = 
+  weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point() +
+  geom_smooth() +
+  theme(legend.position = "none")
+(ggp_tmax_tmin + ggp_prep_dens) / ggp_tmax_date  # patchwork will stuff graphs together, "/" will put this underneath
+```
+
+## data manipulation
+quick example on factors
+```{r}
+weather_df %>% 
+  mutate(
+    name = fct_reorder(name, tmax)  # put in order of tmax from low to high
+  ) %>% 
+  #mutate(name = forcats::fct_relevel(name, c("Waikiki_HA", "CentralPark_NY", "Waterhole_WA"))) %>% 
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+  #geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+```
+what about tmax and tmin? density plot
+```{r}
+weather_df %>%
+  select(name, tmax, tmin) %>% 
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation", 
+    values_to = "temp") %>% 
+  ggplot(aes(x = temp, fill = observation)) +
+  geom_density(alpha = .5) + 
+  facet_grid(~name) + 
+  viridis::scale_fill_viridis(discrete = TRUE)
+```
+```{r}
+pulse_df = 
+  haven::read_sas("data/public_pulse_data.sas7bdat") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit",
+    values_to = "bdi",
+    names_prefix = "bdi_score_"
+  ) %>% 
+  mutate(visit = recode(visit, "bl" = "00m"))
+pulse_df %>% 
+  ggplot(aes(x = visit, y = bdi)) +
+  #geom_boxplot()
+  geom_point() +
+  geom_line(aes(group = id))  # good for longitudinal data analysis
+```
+```{r}
+
+```
+
 
 
