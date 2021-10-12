@@ -180,7 +180,7 @@ pulse_df %>%
   ggplot(aes(x = visit, y = bdi)) +
   #geom_boxplot()
   geom_point() +
-  geom_line(aes(group = id))  # good for longitudinal data analysis
+  geom_line(aes(group = id))  # connect the dots, good for longitudinal data analysis
 ```
 ```{r}
 
