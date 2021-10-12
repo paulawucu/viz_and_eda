@@ -27,9 +27,61 @@ weather_df =
       USS0023B17S = "Waterhole_WA"),
     tmin = tmin / 10,
     tmax = tmax / 10,
-    month = lubridate::floor_date(date, unit = "month")) %>%
+    month = lubridate::floor_date(date, unit = "month")) %>% # create a new column "month" that round down the date to the first day of the week
   select(name, id, everything())
 ```
 ```{r}
 weather_df
 ```
+```{r}
+weather_df %>% 
+  group_by(name, month)  # group_by(name) or group_by(month)
+```
+## count some things 
+```{r}
+weather_df %>% 
+  group_by(month) %>% # you can also group by (name,month)
+  summarize(n_abs = n())  # count how many observations during each month
+# you can use count()
+```
+## It's nice that summarize produces a data frame
+`table` will not simply work
+```{r, eval = FALSE}
+weather_df %>% 
+  pull(mean) %>% 
+  table()
+```
+```{r}
+weather_df %>% 
+  janitor::tabyl(month, name)  # useful way to present the result, better than table()
+```
+
+## more general summaries
+count, takes means, look at SDs...
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarize(
+    n_obs = n(),
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    median_tmax = median(tmax, na.rm = TRUE),
+    sd_tmax = sd(tmax, na.rm = TRUE)
+  ) %>% 
+  ggplot(aes(x = month, y = mean_tmax, color = name)) + 
+  geom_point(alpha = 0.5) + 
+  geom_line()
+```
+Formatting tibble outputs
+```{r}
+weather_df %>%
+  group_by(name) %>% 
+  summarize(
+    n_obs = n(),
+    mean_tmax = mean(tmax, na.rm = TRUE),
+  ) %>%
+  knitr::kable(digits = 2)  # round 2 digits
+```
+
+
+
+
